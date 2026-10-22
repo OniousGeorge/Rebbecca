@@ -1,0 +1,51 @@
+# Demo client: a fictional HVAC business. All data is synthetic.
+business:
+  name: "Comfort Zone Heating & Air"
+  tone: "friendly, concise, professional"
+  timezone: "America/New_York"
+  # Days not listed are closed.
+  hours:
+    mon: ["08:00", "17:00"]
+    tue: ["08:00", "17:00"]
+    wed: ["08:00", "17:00"]
+    thu: ["08:00", "17:00"]
+    fri: ["08:00", "17:00"]
+    sat: ["09:00", "13:00"]
+  service_area: ["Riverton", "Oak Hill", "Maple Heights"]
+  services:
+    - "AC repair"
+    - "Furnace repair"
+    - "Maintenance tune-up"
+    - "New system installation quote"
+  appointment_minutes: 90
+
+faqs:
+  - q: "Do you offer emergency service?"
+    a: "For no-heat or no-AC emergencies we prioritize same-day visits during business hours. If you smell gas, leave the home and call your gas company or 911."
+  - q: "Do you give free quotes?"
+    a: "Quotes for new system installations are free. Repair visits start with a diagnostic."
+  - q: "What payment methods do you accept?"
+    a: "We accept cards and checks."
+
+pricing:
+  diagnostic_fee: "$89, applied to the repair if you go ahead"
+  tune_up: "$129"
+
+urgency_levels: ["emergency", "same_day", "this_week", "flexible"]
+
+escalation:
+  notify_email: "owner@example.com"   # replace with a real address you control
+  # Phrases, not single words: a bare "gas" would flag "do you service gas furnaces?"
+  emergency_keywords:
+    - "gas leak"
+    - "smell gas"
+    - "smells like gas"
+    - "smell of gas"
+    - "carbon monoxide"
+    - "co alarm"
+    - "smoke"
+    - "on fire"
+    - "burning smell"
+
+sheets:
+  spreadsheet_id: "REPLACE_ME"

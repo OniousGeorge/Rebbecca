@@ -62,6 +62,42 @@ class ClientConfig(BaseModel):
     sheets: Sheets
 
 
+DAY_NAMES = {
+    "mon": "Monday",
+    "tue": "Tuesday",
+    "wed": "Wednesday",
+    "thu": "Thursday",
+    "fri": "Friday",
+    "sat": "Saturday",
+    "sun": "Sunday",
+}
+
+
+def format_time(clock: time) -> str:
+    """08:00 -> '8:00 AM'"""
+    hour = clock.hour % 12
+    if hour == 0:
+        hour = 12
+    suffix = "AM"
+    if clock.hour >= 12:
+        suffix = "PM"
+    return str(hour) + ":" + str(clock.minute).zfill(2) + " " + suffix
+
+
+def describe_hours(business: Business) -> str:
+    lines = []
+    for day in DAYS:
+        name = DAY_NAMES[day]
+        if day in business.hours:
+            opens, closes = business.hours[day]
+            lines.append(
+                name + ": " + format_time(time.fromisoformat(opens)) + " to " + format_time(time.fromisoformat(closes))
+            )
+        else:
+            lines.append(name + ": closed")
+    return "\n".join(lines)
+
+
 def load_config(path: Path) -> ClientConfig:
     with open(path, encoding="utf-8") as f:
         return ClientConfig.model_validate(yaml.safe_load(f))

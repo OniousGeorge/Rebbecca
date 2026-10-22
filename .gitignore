@@ -6,7 +6,14 @@ token.json
 credentials.json
 *.log
 
+# Learning scratchpad (kept local)
+lessons/
+
 # Docs (kept local)
 kd-tech-interview-plan-v2.md
 CLAUDE.md
 BREAKLOG.md
+
+# Runtime data from running the agent locally
+data/calendar.json
+data/*.csv

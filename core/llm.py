@@ -11,6 +11,7 @@ from langchain_groq import ChatGroq
 from pydantic import BaseModel
 
 REQUIRED_ENV = ("GEMINI_KEY", "GEMINI_NAME", "GROQ_KEY", "GROQ_NAME")
+TIMEOUT_SECONDS = 15
 
 
 def _check_env() -> None:
@@ -19,15 +20,29 @@ def _check_env() -> None:
             raise RuntimeError(f"Missing environment variable in .env: {name}")
 
 
-def _gemini(**kwargs) -> ChatGoogleGenerativeAI:
-    # Keys are passed explicitly because our .env names are not the library defaults.
-    kwargs.setdefault("api_key", os.environ["GEMINI_KEY"])
-    return ChatGoogleGenerativeAI(model=os.environ["GEMINI_NAME"], **kwargs)
+def _gemini(temperature=0, max_retries=1, timeout=None, api_key=None):
+    # The key is passed explicitly because our .env names are not the library defaults.
+    if api_key is None:
+        api_key = os.environ["GEMINI_KEY"]
+    return ChatGoogleGenerativeAI(
+        model=os.environ["GEMINI_NAME"],
+        api_key=api_key,
+        temperature=temperature,
+        max_retries=max_retries,
+        timeout=timeout,
+    )
 
 
-def _groq(**kwargs) -> ChatGroq:
-    kwargs.setdefault("api_key", os.environ["GROQ_KEY"])
-    return ChatGroq(model=os.environ["GROQ_NAME"], **kwargs)
+def _groq(temperature=0, max_retries=1, timeout=None, api_key=None):
+    if api_key is None:
+        api_key = os.environ["GROQ_KEY"]
+    return ChatGroq(
+        model=os.environ["GROQ_NAME"],
+        api_key=api_key,
+        temperature=temperature,
+        max_retries=max_retries,
+        timeout=timeout,
+    )
 
 
 def with_backup(primary, backup, schema: type[BaseModel] | None = None) -> Runnable:
@@ -46,8 +61,9 @@ def get_llm(schema: type[BaseModel] | None = None, temperature: float = 0) -> Ru
     load_dotenv()
     _check_env()
     # max_retries=1: fail over quickly instead of retrying a rate-limited provider.
-    primary = _gemini(temperature=temperature, max_retries=1)
-    backup = _groq(temperature=temperature, max_retries=1)
+    # timeout: a provider that is merely slow counts as failed, so the backup answers.
+    primary = _gemini(temperature=temperature, max_retries=1, timeout=TIMEOUT_SECONDS)
+    backup = _groq(temperature=temperature, max_retries=1, timeout=TIMEOUT_SECONDS)
     return with_backup(primary, backup, schema)
 
 
