@@ -9,7 +9,7 @@ from pydantic import BaseModel, field_validator
 CLIENTS_DIR = Path(__file__).resolve().parent.parent / "config" / "clients"
 DAYS = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
 
-
+# YAML Business Shape
 class Business(BaseModel):
     name: str
     tone: str
@@ -31,10 +31,10 @@ class Business(BaseModel):
     @field_validator("hours")
     @classmethod
     def _valid_hours(cls, value: dict[str, tuple[str, str]]) -> dict[str, tuple[str, str]]:
-        for day, (opens, closes) in value.items():
+        for day, (opens, closes) in value.items(): # splits the times between open and closing
             if day not in DAYS:
                 raise ValueError(f"unknown day: {day}")
-            if time.fromisoformat(opens) >= time.fromisoformat(closes):
+            if time.fromisoformat(opens) >= time.fromisoformat(closes): #converts values into real time to ensure they make sense
                 raise ValueError(f"{day}: opening time must be before closing time")
         return value
 

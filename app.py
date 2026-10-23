@@ -34,7 +34,6 @@ def make_checkpointer(path="data/conversations.sqlite"):
 
 
 def build_app(config, calendar, store, mailer, llms=None, checkpointer=None, now_fn=None):
-    """`llms` can map "router", "intake", "faq", "scheduler" to fake models for tests."""
     if llms is None:
         llms = {}
 

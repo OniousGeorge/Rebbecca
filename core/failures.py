@@ -12,3 +12,4 @@ def record_failure(where, error):
     """Log the traceback and return a one-line note such as 'router: TimeoutError: timed out'."""
     log.error("%s failed", where, exc_info=error)
     return where + ": " + type(error).__name__ + ": " + str(error)
+

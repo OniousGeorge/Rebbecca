@@ -1,7 +1,6 @@
 """LLM factory: one primary model and one automatic backup (Gemini and Groq).
 
 Nodes never build models themselves. They call get_llm() and use the result.
-Set LLM_PRIMARY=groq in .env to make Groq the primary and Gemini the backup.
 """
 import os
 from concurrent.futures import ThreadPoolExecutor
