@@ -127,3 +127,24 @@ def test_emergency_goes_to_escalation_in_the_graph():
     graph = build_graph(nodes={"router": make_router(CONFIG, fake_llm("faq"))})
     result = graph.invoke(state("There is a gas leak in my basement"))
     assert result["trace"] == ["router", "escalation", "logger"]
+
+
+def test_a_handed_off_conversation_is_forwarded_not_answered():
+    calls = []
+    router = make_router(CONFIG, fake_llm("faq", calls=calls))
+    result = router(state("Any update on my question?", handed_off=True))
+    assert result["category"] == "escalate"
+    assert result["escalation_reason"] == "follow_up_after_handoff"
+    assert result["reply"] == ""
+    assert calls == []  # no LLM needed
+
+
+def test_an_emergency_still_gets_the_safety_reply_after_a_handoff():
+    router = make_router(CONFIG, fake_llm("faq"))
+    result = router(state("now I smell gas in the hallway", handed_off=True))
+    assert result["escalation_reason"] == "emergency: smell gas"
+
+
+def test_new_emergency_wordings_are_caught_by_the_router():
+    router = make_router(CONFIG, fake_llm("faq"))
+    assert router(state("there's a strong gas smell downstairs"))["escalation_reason"] == "emergency: gas smell"

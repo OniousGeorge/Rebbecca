@@ -12,8 +12,7 @@ from langgraph.checkpoint.memory import MemorySaver
 
 from adapters.calendar_json import JsonCalendar
 from adapters.console_mail import ConsoleMail
-from adapters.csv_log import CsvLog
-from app import build_app
+from app import build_app, make_store
 from core.config import load_client
 
 CUSTOMER_EMAIL = "customer@example.com"
@@ -25,7 +24,8 @@ def main():
     load_dotenv()
     config = load_client("hvac_demo")
     calendar = JsonCalendar("data/calendar.json", config.business)
-    store = CsvLog("data/leads.csv", "data/bookings.csv")
+    store, store_name = make_store(config)
+    print("Logging leads to: " + store_name)
     graph = build_app(config, calendar, store, ConsoleMail(), checkpointer=MemorySaver())
     run_config = {"configurable": {"thread_id": THREAD_ID}}
 

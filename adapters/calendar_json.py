@@ -41,6 +41,10 @@ class JsonCalendar:
             return self.now_fn()
         return datetime.now(self.timezone)
 
+    def now(self):
+        """The current time in the business's timezone (fixed in tests)."""
+        return self._now().astimezone(self.timezone)
+
     # --- slot grid -----------------------------------------------------------
     def _slots_on(self, day):
         """Every appointment start time on one calendar day, from the business hours."""
@@ -70,8 +74,13 @@ class JsonCalendar:
         return True
 
     # --- public interface ----------------------------------------------------
-    def get_open_slots(self, count=3, after=None):
-        """Next open appointment starts as ISO strings, optionally only those after a given slot."""
+    def get_open_slots(self, count=3, after=None, start_date=None, period=None):
+        """Next open appointment starts as ISO strings.
+
+        after:      only slots later than this ISO slot
+        start_date: only slots on or after this day
+        period:     "morning" (before noon) or "afternoon" (noon or later)
+        """
         bookings = self._load()
         earliest = self._now() + timedelta(hours=MIN_LEAD_HOURS)
         after_dt = None
@@ -80,11 +89,17 @@ class JsonCalendar:
 
         found = []
         day = earliest.astimezone(self.timezone).date()
+        if start_date is not None and start_date > day:
+            day = start_date
         for _ in range(SEARCH_DAYS):
             for slot in self._slots_on(day):
                 if slot < earliest:
                     continue
                 if after_dt is not None and slot <= after_dt:
+                    continue
+                if period == "morning" and slot.hour >= 12:
+                    continue
+                if period == "afternoon" and slot.hour < 12:
                     continue
                 if not self._is_free(slot, bookings):
                     continue

@@ -112,7 +112,7 @@ def test_a_crash_labels_the_email_as_an_error_and_tells_the_owner_and_does_not_r
     assert [o["action"] for o in outcomes] == ["error", "error"]  # the loop kept going after the first crash
     assert ("error", "m1") in inbox.events
     notice = [event for event in inbox.events if event[0] == "notice"][0]
-    assert notice[1] == "owner@example.com"
+    assert notice[1] == CONFIG.escalation.notify_email
     assert "boom" in notice[3]
     assert "reply" not in names(inbox)
 

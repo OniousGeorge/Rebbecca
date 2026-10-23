@@ -2,6 +2,7 @@
 from pydantic import BaseModel, Field
 
 from core.config import ClientConfig, describe_hours
+from core.failures import record_failure
 from core.llm import get_llm
 from core.messages import latest_customer, transcript
 from core.state import State, reply_update
@@ -18,6 +19,8 @@ SYSTEM_PROMPT = """You answer customer questions for {business}, an HVAC company
 Tone: {tone}.
 Use ONLY the facts below. Never invent prices, hours, policies or availability.
 If the facts do not fully answer the question, set answerable to false.
+If the customer asks whether you offer a service, area, brand or option that the facts do not
+mention, do not say no and do not guess: set answerable to false so a person can answer.
 
 FACTS
 Opening hours:
@@ -78,7 +81,7 @@ def make_faq(config: ClientConfig, llm=None):
                 "trace": ["faq"],
                 "escalated": True,
                 "escalation_reason": "llm_unavailable",
-                "errors": ["faq: " + str(error)],
+                "errors": [record_failure("faq", error)],
             }
 
         # If the facts do not cover it, a person answers. We never improvise.

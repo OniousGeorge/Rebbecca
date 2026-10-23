@@ -1,0 +1,407 @@
+{
+  "primary": "groq",
+  "runs": 1,
+  "results": [
+    {
+      "scenario": "booking in two emails",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        1.5099851999984821,
+        1.338702100001683
+      ],
+      "llm_calls": 4,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 4,
+          "failed": 0,
+          "seconds": 2.81806950000464
+        }
+      },
+      "tokens": 2048,
+      "cost_usd": 0.0005668499999999999,
+      "replies": [
+        "Thanks, Dana Whitfield! Here are the next available appointment times:\n1. Mon Oct 19 at 9:30 AM\n2. Mon Oct 19 at 11:00 AM\n3. Mon Oct 19 at 12:30 PM\nReply with the number that works for you, or tell me if you would like other times.",
+        "You are booked for Mon Oct 19 at 11:00 AM at 48 Maple Ave. See you then!"
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "booking over three emails",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        1.629633799999283,
+        1.2560691999970004,
+        1.138932499998191
+      ],
+      "llm_calls": 6,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 6,
+          "failed": 0,
+          "seconds": 3.975354199996218
+        }
+      },
+      "tokens": 3042,
+      "cost_usd": 0.00078885,
+      "replies": [
+        "Thanks for contacting Comfort Zone Heating & Air! To get you scheduled, could you send me:\n- your name\n- the service address\n- how urgent it is (an emergency, same day, this week, or flexible)",
+        "Thanks, Sam Lee! Here are the next available appointment times:\n1. Mon Oct 19 at 9:30 AM\n2. Mon Oct 19 at 11:00 AM\n3. Mon Oct 19 at 12:30 PM\nReply with the number that works for you, or tell me if you would like other times.",
+        "You are booked for Mon Oct 19 at 9:30 AM at 12 Oak St. See you then!"
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "asks for Thursday afternoon",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        2.359779599999456
+      ],
+      "llm_calls": 2,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 2,
+          "failed": 0,
+          "seconds": 2.3466751000014483
+        }
+      },
+      "tokens": 1005,
+      "cost_usd": 0.00030195,
+      "replies": [
+        "Thanks, Jordan Lee! Here are the next available appointment times:\n1. Thu Oct 22 at 12:30 PM\n2. Thu Oct 22 at 2:00 PM\n3. Thu Oct 22 at 3:30 PM\nReply with the number that works for you, or tell me if you would like other times."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "asks for today",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        1.9366423999999824
+      ],
+      "llm_calls": 2,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 2,
+          "failed": 0,
+          "seconds": 1.9257219999999506
+        }
+      },
+      "tokens": 1174,
+      "cost_usd": 0.00040155,
+      "replies": [
+        "Thanks, Kim Park! Here are the next available appointment times:\n1. Mon Oct 19 at 9:30 AM\n2. Mon Oct 19 at 11:00 AM\n3. Mon Oct 19 at 12:30 PM\nReply with the number that works for you, or tell me if you would like other times."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "slot taken before the customer picks",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        1.1332565999982762,
+        1.142330499998934
+      ],
+      "llm_calls": 4,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 4,
+          "failed": 0,
+          "seconds": 2.2364131000031193
+        }
+      },
+      "tokens": 2020,
+      "cost_usd": 0.0005545499999999999,
+      "replies": [
+        "Thanks, Dana Whitfield! Here are the next available appointment times:\n1. Mon Oct 19 at 9:30 AM\n2. Mon Oct 19 at 11:00 AM\n3. Mon Oct 19 at 12:30 PM\nReply with the number that works for you, or tell me if you would like other times.",
+        "Sorry, that time was just taken. Here are the next available appointment times:\n1. Mon Oct 19 at 9:30 AM\n2. Mon Oct 19 at 12:30 PM\n3. Mon Oct 19 at 2:00 PM\nReply with the number that works for you, or tell me if you would like other times."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "Saturday hours",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        1.2576388000015868
+      ],
+      "llm_calls": 2,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 2,
+          "failed": 0,
+          "seconds": 1.2484961000045587
+        }
+      },
+      "tokens": 1000,
+      "cost_usd": 0.00023325,
+      "replies": [
+        "Our Saturday hours are 9:00\u202fAM to 1:00\u202fPM."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "tune-up price",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        1.0403974000000744
+      ],
+      "llm_calls": 2,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 2,
+          "failed": 0,
+          "seconds": 1.0320690000007744
+        }
+      },
+      "tokens": 1005,
+      "cost_usd": 0.00023625,
+      "replies": [
+        "A tune\u2011up costs $129."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "service area",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        1.3679062000010163
+      ],
+      "llm_calls": 2,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 2,
+          "failed": 0,
+          "seconds": 1.359848999996757
+        }
+      },
+      "tokens": 1005,
+      "cost_usd": 0.00023715,
+      "replies": [
+        "Yes, we service Oak Hill."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "unknown question",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        1.4186326000017289
+      ],
+      "llm_calls": 2,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 2,
+          "failed": 0,
+          "seconds": 1.4022569000007934
+        }
+      },
+      "tokens": 1062,
+      "cost_usd": 0.00027135,
+      "replies": [
+        "Thanks for reaching out. I have passed your message to our team and someone will follow up with you shortly."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "question in the middle of intake",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        1.3826956000011705,
+        1.7917822999988857
+      ],
+      "llm_calls": 4,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 4,
+          "failed": 0,
+          "seconds": 3.157257100006973
+        }
+      },
+      "tokens": 2197,
+      "cost_usd": 0.0005802,
+      "replies": [
+        "Thanks for contacting Comfort Zone Heating & Air! To get you scheduled, could you send me:\n- your name\n- the service address\n- how urgent it is (an emergency, same day, this week, or flexible)",
+        "Our Saturday hours are 9:00\u202fAM to 1:00\u202fPM."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "gas emergency",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        0.0037570999993477017
+      ],
+      "llm_calls": 0,
+      "failed_calls": 0,
+      "by_provider": {},
+      "tokens": 0,
+      "cost_usd": 0.0,
+      "replies": [
+        "This may be a safety emergency. If you smell gas, see smoke or flames, or a carbon monoxide or smoke alarm is going off, leave the building now and call 911 from outside (and your gas utility for a gas smell). I have alerted our team and someone will contact you as soon as possible."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "angry customer",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        0.6666370999992068
+      ],
+      "llm_calls": 1,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 1,
+          "failed": 0,
+          "seconds": 0.6587737000008929
+        }
+      },
+      "tokens": 442,
+      "cost_usd": 0.00011355,
+      "replies": [
+        "Thanks for reaching out. I have passed your message to our team and someone will follow up with you shortly."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "spam",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        0.5541923999990104
+      ],
+      "llm_calls": 1,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 1,
+          "failed": 0,
+          "seconds": 0.5487418999982765
+        }
+      },
+      "tokens": 420,
+      "cost_usd": 0.0001017,
+      "replies": [
+        ""
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "outside the service area",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        1.765353499999037
+      ],
+      "llm_calls": 2,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 2,
+          "failed": 0,
+          "seconds": 1.755050999996456
+        }
+      },
+      "tokens": 972,
+      "cost_usd": 0.00028484999999999996,
+      "replies": [
+        "Thanks for reaching out! Unfortunately Springfield is outside our service area. We currently serve: Riverton, Oak Hill, Maple Heights."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "cancel, confirmed",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        0.5933288000014727,
+        0.5492776000028243
+      ],
+      "llm_calls": 2,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 2,
+          "failed": 0,
+          "seconds": 1.1111879000018234
+        }
+      },
+      "tokens": 926,
+      "cost_usd": 0.00022125,
+      "replies": [
+        "I found your appointment on Mon Oct 19 at 9:30 AM at 7 Birch Rd. Reply YES to cancel it, or NO to keep it. If you would rather move it, just tell me a day that works.",
+        "Your appointment on Mon Oct 19 at 9:30 AM has been cancelled."
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "cancel, changed mind",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        0.7279975999990711,
+        0.6081523000029847
+      ],
+      "llm_calls": 2,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 2,
+          "failed": 0,
+          "seconds": 1.2965554000038537
+        }
+      },
+      "tokens": 960,
+      "cost_usd": 0.00023715,
+      "replies": [
+        "I found your appointment on Mon Oct 19 at 9:30 AM at 7 Birch Rd. Reply YES to cancel it, or NO to keep it. If you would rather move it, just tell me a day that works.",
+        "No problem, your appointment is still booked. See you then!"
+      ],
+      "run": 1
+    },
+    {
+      "scenario": "reschedule to Wednesday",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        1.484051700001146,
+        1.043608599997242
+      ],
+      "llm_calls": 4,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 4,
+          "failed": 0,
+          "seconds": 2.466053699998156
+        }
+      },
+      "tokens": 1831,
+      "cost_usd": 0.00048659999999999996,
+      "replies": [
+        "I found your appointment on Mon Oct 19 at 9:30 AM. Here are the next available appointment times:\n1. Wed Oct 21 at 8:00 AM\n2. Wed Oct 21 at 9:30 AM\n3. Wed Oct 21 at 11:00 AM\nReply with the number that works for you, or tell me if you would like other times.",
+        "You are booked for Wed Oct 21 at 8:00 AM at . See you then!"
+      ],
+      "run": 1
+    }
+  ]
+}

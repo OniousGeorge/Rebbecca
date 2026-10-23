@@ -17,3 +17,10 @@ BREAKLOG.md
 # Runtime data from running the agent locally
 data/calendar.json
 data/*.csv
+
+# Google service account keys (private keys: never commit)
+service_account.json
+scheduling-agent-*.json
+*-service-account*.json
+data/*.sqlite
+data/agent.lock

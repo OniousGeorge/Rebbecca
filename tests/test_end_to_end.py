@@ -10,7 +10,7 @@ from agents.faq import FAQAnswer
 from agents.intake import IntakeExtraction
 from agents.router import RouterDecision
 from agents.scheduler import SlotChoice
-from app import build_app
+from app import build_app, make_checkpointer
 from tests.fakes import CONFIG, MON_1100, RecordingMailer, ScriptedLLM, customer, fixed_now
 
 RUN = {"configurable": {"thread_id": "t1"}}
@@ -23,7 +23,7 @@ def route(category, continues=False):
 class Agent:
     """The assembled app plus handles on everything it touches."""
 
-    def __init__(self, tmp_path, router=(), intake=(), faq=(), scheduler=()):
+    def __init__(self, tmp_path, router=(), intake=(), faq=(), scheduler=(), checkpointer=None):
         self.calendar = JsonCalendar(tmp_path / "calendar.json", CONFIG.business, now_fn=fixed_now)
         self.leads_path = tmp_path / "leads.csv"
         self.bookings_path = tmp_path / "bookings.csv"
@@ -40,7 +40,7 @@ class Agent:
             CsvLog(self.leads_path, self.bookings_path),
             self.mailer,
             llms=self.llms,
-            checkpointer=MemorySaver(),
+            checkpointer=checkpointer or MemorySaver(),
             now_fn=fixed_now,
         )
 
@@ -136,22 +136,32 @@ def test_spam_gets_no_reply_and_is_not_logged(tmp_path):
     assert agent.leads() == []
 
 
-def test_an_old_escalation_does_not_leak_into_the_next_email(tmp_path):
+def test_after_a_handoff_the_agent_stops_replying_and_forwards_new_emails(tmp_path):
     agent = Agent(
         tmp_path,
-        router=[route("faq"), route("faq")],
-        faq=[
-            FAQAnswer(answerable=False, answer=""),
-            FAQAnswer(answerable=True, answer="We open at 8 AM."),
-        ],
+        router=[route("faq")],  # only the first email reaches the LLM
+        faq=[FAQAnswer(answerable=False, answer="")],
     )
     first = agent.send("Do you repair boats?")
-    assert first["escalated"] is True
+    assert first["handed_off"] is True
+    assert "someone will follow up" in first["reply"]
 
-    second = agent.send("When do you open?")
-    assert second["escalated"] is False
-    assert second["reply"] == "We open at 8 AM."
-    assert len(agent.mailer.sent) == 1  # only the first email alerted the owner
+    second = agent.send("Hello? Any news about the boat?")
+    assert second["reply"] == ""  # a person owns the conversation now
+    assert len(agent.mailer.sent) == 2
+    assert "wrote again" in agent.mailer.sent[1]["subject"]
+    assert "Any news about the boat?" in agent.mailer.sent[1]["body"]
+
+
+def test_an_old_reply_is_never_sent_again(tmp_path):
+    # main.py sends whatever `reply` holds after a run, so a stale reply would be re-sent.
+    agent = Agent(
+        tmp_path,
+        router=[route("faq"), route("spam")],
+        faq=[FAQAnswer(answerable=True, answer="We open at 8 AM.")],
+    )
+    assert agent.send("When do you open?")["reply"] == "We open at 8 AM."
+    assert agent.send("BUY CHEAP WATCHES")["reply"] == ""
 
 
 def test_customer_outside_the_service_area_is_told_and_logged(tmp_path):
@@ -167,13 +177,34 @@ def test_customer_outside_the_service_area_is_told_and_logged(tmp_path):
 
 
 def test_cancelling_a_booking_through_the_whole_agent(tmp_path):
-    agent = Agent(tmp_path, router=[route("cancel")])
+    agent = Agent(tmp_path, router=[route("cancel"), route("cancel", continues=True)])
     agent.calendar.book_slot(MON_1100, {"name": "Sam Lee", "contact": "sam@example.com", "address": "12 Oak St"})
 
-    result = agent.send("Please cancel my appointment")
-    assert "has been cancelled" in result["reply"]
+    first = agent.send("Please cancel my appointment")
+    assert "Reply YES to cancel it" in first["reply"]
+    assert agent.calendar.find_booking("sam@example.com") is not None  # nothing cancelled yet
+
+    second = agent.send("Yes, cancel it")
+    assert "has been cancelled" in second["reply"]
     assert agent.calendar.find_booking("sam@example.com") is None
     assert agent.leads()[0]["status"] == "cancelled"
+
+
+def test_a_customer_who_asks_for_today_late_in_the_day_is_told_plainly(tmp_path):
+    agent = Agent(
+        tmp_path,
+        router=[route("new_lead")],
+        intake=[
+            IntakeExtraction(
+                name="Sam Lee", address="12 Oak St", town="Riverton", issue="AC out", urgency="same_day",
+                preferred_date="2026-10-19",
+            )
+        ],
+    )
+    agent.calendar.now_fn = lambda: fixed_now().replace(hour=19)  # 7 PM: no visits left today
+    result = agent.send("AC is out, I'm Sam Lee at 12 Oak St Riverton, today if possible")
+    assert "I'm sorry, we don't have an opening today." in result["reply"]
+    assert "1. Tue Oct 20 at 8:00 AM" in result["reply"]
 
 
 @pytest.mark.parametrize("text", ["", "   "])
@@ -182,3 +213,19 @@ def test_an_empty_email_goes_to_a_human(tmp_path, text):
     result = agent.send(text)
     assert result["escalation_reason"] == "empty_message"
     assert len(agent.mailer.sent) == 1
+
+
+def test_a_restart_does_not_forget_a_conversation(tmp_path):
+    memory = tmp_path / "conversations.sqlite"
+    before = Agent(
+        tmp_path,
+        router=[route("faq")],
+        faq=[FAQAnswer(answerable=False, answer="")],
+        checkpointer=make_checkpointer(str(memory)),
+    )
+    assert before.send("Do you repair boats?")["handed_off"] is True
+
+    after_restart = Agent(tmp_path, checkpointer=make_checkpointer(str(memory)))  # a fresh process, same file
+    result = after_restart.send("Hello? Any news?")
+    assert result["reply"] == ""  # still remembers the conversation was handed to a person
+    assert "wrote again" in after_restart.mailer.sent[0]["subject"]

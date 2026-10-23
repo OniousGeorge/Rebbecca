@@ -4,6 +4,9 @@ from typing import Annotated, Literal, TypedDict
 
 Category = Literal["new_lead", "faq", "reschedule", "cancel", "escalate", "spam"]
 
+# Escalation reason used when a customer writes again after the conversation was handed to a person.
+FOLLOW_UP_AFTER_HANDOFF = "follow_up_after_handoff"
+
 
 class Message(TypedDict):
     role: str  # "customer" or "agent"
@@ -28,7 +31,7 @@ class State(TypedDict, total=False):
     active_flow: str | None  # "intake" | "booking" | "reschedule" | "cancel" | None
 
     # Intake
-    lead: dict  # name, contact, phone, address, town, issue, urgency
+    lead: dict  # name, contact, phone, address, town, issue, urgency, preferred_date, preferred_period
     missing_fields: list[str]
     out_of_area: bool
 
@@ -36,10 +39,12 @@ class State(TypedDict, total=False):
     proposed_slots: list[str]  # ISO 8601 strings
     booking: dict | None  # {id, start, end, status}; set only by the run that booked/cancelled
     reschedule_of: str | None  # id of the booking being replaced
+    cancel_of: str | None  # id of the booking waiting for the customer's YES to cancel
 
     # Escalation
-    escalated: bool
+    escalated: bool  # this run needs a person
     escalation_reason: str | None
+    handed_off: bool  # a person owns this conversation now: the agent stops replying on it
 
     # What to send back to the customer (empty when this run has nothing to say)
     reply: str

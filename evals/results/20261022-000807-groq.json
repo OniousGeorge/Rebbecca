@@ -1,0 +1,29 @@
+{
+  "primary": "groq",
+  "runs": 1,
+  "results": [
+    {
+      "scenario": "asks for Thursday afternoon",
+      "passed": true,
+      "problems": [],
+      "seconds_per_email": [
+        877.0479051999973
+      ],
+      "llm_calls": 2,
+      "failed_calls": 0,
+      "by_provider": {
+        "groq": {
+          "calls": 2,
+          "failed": 0,
+          "seconds": 877.010448699999
+        }
+      },
+      "tokens": 1010,
+      "cost_usd": 0.00030495,
+      "replies": [
+        "Thanks, Jordan Lee! Here are the next available appointment times:\n1. Thu Oct 22 at 12:30 PM\n2. Thu Oct 22 at 2:00 PM\n3. Thu Oct 22 at 3:30 PM\nReply with the number that works for you, or tell me if you would like other times."
+      ],
+      "run": 1
+    }
+  ]
+}

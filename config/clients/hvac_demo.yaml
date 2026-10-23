@@ -34,18 +34,38 @@ pricing:
 urgency_levels: ["emergency", "same_day", "this_week", "flexible"]
 
 escalation:
-  notify_email: "owner@example.com"   # replace with a real address you control
-  # Phrases, not single words: a bare "gas" would flag "do you service gas furnaces?"
+  notify_email: "oniousg20@gmail.com" # Bosses Email
+  
+
+  # Escalation Words
   emergency_keywords:
-    - "gas leak"
+    # gas
     - "smell gas"
-    - "smells like gas"
-    - "smell of gas"
+    - "gas smell"
+    - "gas odor"
+    - "gas odour"
+    - "odor gas"
+    - "gas leak"
+    - "leak gas"
+    - "rotten egg"
     - "carbon monoxide"
+    - "monoxide"
     - "co alarm"
-    - "smoke"
+    - "co detector"
+    - "co monitor"
+    - "smell smoke"
+    - "smoke coming"
+    - "smoke from"
+    - "see smoke"
+    - "smoking"
+    - "alarm going off"
     - "on fire"
+    - "flames"
+    - "sparks"
+    - "sparking"
     - "burning smell"
+    - "smell burning"
 
 sheets:
-  spreadsheet_id: "REPLACE_ME"
+  spreadsheet_id: "1GHj2NEiLKc-Y__ix62TQYjqwiVtXNy8hWVeK2zVzkBc"
+  # Client Booking SpreadSheet

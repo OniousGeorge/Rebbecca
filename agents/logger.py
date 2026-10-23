@@ -3,6 +3,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from core.config import ClientConfig
+from core.failures import record_failure
 from core.state import State
 
 
@@ -49,7 +50,7 @@ def make_logger(store, config: ClientConfig, now_fn=None):
                 store.add_booking(state.get("thread_id", ""), booking)
         except Exception as error:
             # A logging failure must not stop the customer getting their reply.
-            update["errors"] = ["logger: " + str(error)]
+            update["errors"] = [record_failure("logger", error)]
         return update
 
     return logger

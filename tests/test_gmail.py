@@ -191,3 +191,24 @@ def test_dry_run_changes_and_sends_nothing(capsys):
 def test_gmail_adapter_satisfies_the_mailer_interface_used_by_escalation():
     assert callable(GmailInbox(FakeGmail()).send_notice)
     assert email_rules  # the pure rules module is what the adapter builds on
+
+
+def test_fetch_new_includes_the_reply_address():
+    headers = {"From": "Dana <dana@example.com>", "Reply-To": "office@example.com"}
+    gmail = FakeGmail({"m1": raw_message("m1", "t1", 1, headers)})
+    assert GmailInbox(gmail).fetch_new()[0]["reply_to"] == "office@example.com"
+
+
+def test_reply_goes_to_the_reply_address_when_there_is_one():
+    gmail = FakeGmail()
+    customer_email = {
+        "sender": "dana@example.com",
+        "reply_to": "office@example.com",
+        "subject": "AC",
+        "thread_id": "t1",
+        "message_id_header": "",
+        "references": "",
+    }
+    GmailInbox(gmail).send_reply(customer_email, "hi")
+    sent = email.message_from_bytes(base64.urlsafe_b64decode(calls_named(gmail, "send")[0][1]["raw"]))
+    assert sent["To"] == "office@example.com"

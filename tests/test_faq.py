@@ -42,3 +42,8 @@ def test_prompt_contains_only_the_clients_facts():
     assert "Do you give free quotes?" in prompt
     assert "Riverton" in prompt
     assert "Never invent" in prompt
+
+
+def test_prompt_forbids_answering_no_to_unlisted_services():
+    prompt = facts_prompt(CONFIG)
+    assert "do not say no and do not guess" in prompt

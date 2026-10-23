@@ -110,6 +110,7 @@ class GmailInbox:
                     "thread_id": raw["threadId"],
                     "received": int(raw.get("internalDate", "0")),
                     "sender": address,
+                    "reply_to": email_rules.reply_address(payload),
                     "sender_name": name,
                     "subject": headers.get("subject", ""),
                     "body": email_rules.strip_quoted_reply(email_rules.extract_body(payload)),
@@ -136,16 +137,17 @@ class GmailInbox:
 
     def send_reply(self, email, body):
         """Reply inside the customer's own thread."""
+        to_address = email.get("reply_to") or email["sender"]
         message = email_rules.build_reply(
             self.own_address,
-            email["sender"],
+            to_address,
             email["subject"],
             body,
             email["message_id_header"],
             email["references"],
         )
         if self.dry_run:
-            print("[dry run] would reply to " + email["sender"] + " (" + message["Subject"] + "):\n" + body)
+            print("[dry run] would reply to " + to_address + " (" + message["Subject"] + "):\n" + body)
             return
         request_body = {"raw": email_rules.encode_for_gmail(message), "threadId": email["thread_id"]}
         self.service.users().messages().send(userId="me", body=request_body).execute()

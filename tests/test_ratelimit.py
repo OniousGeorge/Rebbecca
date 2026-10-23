@@ -99,3 +99,33 @@ def test_without_a_limiter_nothing_is_limited():
     outcomes = process_inbox(inbox, StubGraph({"reply": "hi", "category": "faq"}), CONFIG, set())
     assert [o["action"] for o in outcomes] == ["replied", "replied", "replied"]
     assert names(inbox).count("notice") == 0
+
+
+# --- daily total cap ------------------------------------------------------------
+def from_sender(message_id, sender):
+    email = incoming(message_id, "t-" + message_id)
+    email["sender"] = sender
+    return email
+
+
+def test_the_daily_cap_counts_all_senders_together():
+    inbox = FakeInbox([from_sender("m1", "a@x.com"), from_sender("m2", "b@x.com"), from_sender("m3", "c@x.com")])
+    daily, _ = make_limiter(2)
+    outcomes = process_inbox(inbox, StubGraph({"reply": "hi", "category": "faq"}), CONFIG, set(), daily_limiter=daily)
+
+    assert [o["action"] for o in outcomes] == ["replied", "replied", "daily_limit"]
+    assert ("processed", "m3") in inbox.events  # labelled, so it is not listed again
+    notices = [event for event in inbox.events if event[0] == "notice"]
+    assert len(notices) == 1
+    assert "Daily email limit reached" in notices[0][2]
+    assert "NOT answered" in notices[0][3]
+
+
+def test_emails_stopped_by_the_sender_limit_do_not_use_up_the_daily_count():
+    inbox = FakeInbox([from_sender("m1", "a@x.com"), from_sender("m2", "a@x.com"), from_sender("m3", "b@x.com")])
+    per_sender, _ = make_limiter(1)
+    daily, _ = make_limiter(2)
+    outcomes = process_inbox(
+        inbox, StubGraph({"reply": "hi", "category": "faq"}), CONFIG, set(), per_sender, daily
+    )
+    assert [o["action"] for o in outcomes] == ["replied", "rate_limited", "replied"]

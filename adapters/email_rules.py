@@ -119,6 +119,20 @@ def sender_of(payload):
     return name, address.lower()
 
 
+def reply_address(payload):
+    """Where to send our reply: Reply-To if it is on the sender's own domain, otherwise From.
+
+    A Reply-To on another domain is ignored. Otherwise anyone could make this open inbox send
+    our replies to a stranger by putting the stranger's address in Reply-To.
+    """
+    _, sender = sender_of(payload)
+    _, reply_to = parseaddr(headers_of(payload).get("reply-to", ""))
+    reply_to = reply_to.lower()
+    if "@" in reply_to and reply_to.split("@")[-1] == sender.split("@")[-1]:
+        return reply_to
+    return sender
+
+
 # --- loop guard --------------------------------------------------------------
 def skip_reason(payload, own_address, allowed_senders=None):
     """Why the agent must not answer this message, or None if it may."""

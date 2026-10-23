@@ -173,3 +173,18 @@ def test_encoded_message_can_be_decoded_back():
     decoded = email.message_from_bytes(base64.urlsafe_b64decode(raw))
     assert decoded["Subject"] == "Re: Hi"
     assert decoded.get_payload().strip() == "Hello there"
+
+
+# --- Reply-To ------------------------------------------------------------------
+def test_reply_to_on_the_senders_own_domain_is_used():
+    p = payload({"From": "Dana <dana@acme.com>", "Reply-To": "Office <Office@Acme.com>"}, plain="x")
+    assert rules.reply_address(p) == "office@acme.com"
+
+
+def test_reply_to_on_another_domain_is_ignored_so_the_inbox_cannot_relay_spam():
+    p = payload({"From": "dana@acme.com", "Reply-To": "victim@elsewhere.com"}, plain="x")
+    assert rules.reply_address(p) == "dana@acme.com"
+
+
+def test_without_reply_to_the_sender_gets_the_reply():
+    assert rules.reply_address(payload(plain="x")) == "dana@example.com"

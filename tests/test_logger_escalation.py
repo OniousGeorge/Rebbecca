@@ -92,7 +92,7 @@ def test_escalation_notifies_the_owner_with_the_conversation():
     result = make_escalation(CONFIG, mailer)(state)
 
     notice = mailer.sent[0]
-    assert notice["to"] == "owner@example.com"
+    assert notice["to"] == CONFIG.escalation.notify_email
     assert "unknown_faq" in notice["subject"]
     assert "Comfort Zone Heating & Air" in notice["subject"]
     assert "CUSTOMER: Do you repair boats?" in notice["body"]
@@ -114,3 +114,25 @@ def test_customer_still_gets_a_reply_when_the_notice_cannot_be_sent():
     result = make_escalation(CONFIG, mailer)({"escalation_reason": "x", "messages": [customer("hi")]})
     assert "someone will follow up" in result["reply"]
     assert "mail server down" in result["errors"][0]
+
+
+def test_after_escalating_the_conversation_is_handed_off():
+    result = make_escalation(CONFIG, RecordingMailer())({"escalation_reason": "unknown_faq", "messages": [customer("x")]})
+    assert result["handed_off"] is True
+
+
+def test_a_follow_up_after_handoff_is_forwarded_without_a_reply():
+    mailer = RecordingMailer()
+    state = {"escalation_reason": "follow_up_after_handoff", "messages": [customer("hello? any news?")]}
+    result = make_escalation(CONFIG, mailer)(state)
+    assert result["reply"] == ""
+    assert "messages" not in result  # nothing was said to the customer
+    assert "wrote again" in mailer.sent[0]["subject"]
+    assert "The agent did not reply" in mailer.sent[0]["body"]
+    assert "hello? any news?" in mailer.sent[0]["body"]
+
+
+def test_the_emergency_reply_covers_smoke_and_fire_too():
+    result = make_escalation(CONFIG, RecordingMailer())({"escalation_reason": "emergency: smell smoke", "messages": []})
+    assert "smoke or flames" in result["reply"]
+    assert "911" in result["reply"]

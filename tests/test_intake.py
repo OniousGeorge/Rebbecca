@@ -1,5 +1,7 @@
+import pytest
+
 from agents.intake import IntakeExtraction, make_intake
-from tests.fakes import CONFIG, ScriptedLLM, customer
+from tests.fakes import CONFIG, ScriptedLLM, customer, fixed_now
 
 
 def state(text, **extra):
@@ -86,3 +88,42 @@ def test_the_prompt_lists_allowed_urgency_levels_and_what_is_known():
     system = llm.calls[0][0][1]
     assert "emergency, same_day, this_week, flexible" in system
     assert "Sam" in system
+
+
+# --- the day the customer asked for ------------------------------------------------
+def test_requested_day_and_part_of_day_are_kept():
+    llm = ScriptedLLM(found(preferred_date="2026-10-23", preferred_period="Afternoon"))
+    result = make_intake(CONFIG, llm, now_fn=fixed_now)(state("Friday afternoon works best"))
+    assert result["lead"]["preferred_date"] == "2026-10-23"
+    assert result["lead"]["preferred_period"] == "afternoon"
+
+
+@pytest.mark.parametrize("bad_date", ["2026-10-01", "Friday", "2027-06-01", ""])
+def test_past_malformed_or_far_off_days_are_ignored(bad_date):
+    llm = ScriptedLLM(found(preferred_date=bad_date, preferred_period="evening"))
+    result = make_intake(CONFIG, llm, now_fn=fixed_now)(state("some day"))
+    assert "preferred_date" not in result["lead"]
+    assert "preferred_period" not in result["lead"]  # only morning or afternoon are accepted
+
+
+def test_the_prompt_tells_the_model_what_today_is():
+    llm = ScriptedLLM(found())
+    make_intake(CONFIG, llm, now_fn=fixed_now)(state("hello"))
+    assert "Today is Monday, 2026-10-19" in llm.calls[0][0][1]
+
+
+@pytest.mark.parametrize(
+    "day, urgency",
+    [("2026-10-19", "same_day"), ("2026-10-22", "this_week"), ("2026-11-05", "flexible")],
+)
+def test_a_named_day_answers_the_urgency_question(day, urgency):
+    llm = ScriptedLLM(found(name="Jordan Lee", address="4 Elm St", issue="AC broken", preferred_date=day))
+    result = make_intake(CONFIG, llm, now_fn=fixed_now)(state("Could someone come then?"))
+    assert result["lead"]["urgency"] == urgency
+    assert result["missing_fields"] == []
+
+
+def test_a_stated_urgency_is_not_overwritten_by_the_day():
+    llm = ScriptedLLM(found(urgency="emergency", preferred_date="2026-10-22"))
+    result = make_intake(CONFIG, llm, now_fn=fixed_now)(state("no heat, Thursday at the latest"))
+    assert result["lead"]["urgency"] == "emergency"
