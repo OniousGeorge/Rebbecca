@@ -1,8 +1,8 @@
-# Rebeecca: an AI customer service agent for small HVAC businesses
+# Rebbecca: an AI customer service agent for small HVAC businesses
 
-Rebeecca is the customer service lady your HVAC business doesn't have time to hire. She watches the company inbox, answers customers within seconds, collects the job details, books an appointment, logs every lead to Google Sheets, and hands the conversation to a person whenever she shouldn't be the one answering.
+Rebbeecca is the customer service lady your HVAC business doesn't have time to hire. She watches the company inbox, answers customers within seconds, collects the job details, books an appointment, logs every lead to Google Sheets, and hands the conversation to a person whenever she shouldn't be the one answering.
 
-She is the email version of a "missed-call follow-up" product: the customer reaches out, nobody is free to answer, and Rebeecca makes sure they are not lost.
+She is the email version of a "missed-call follow-up" product: the customer reaches out, nobody is free to answer, and Rebbeecca makes sure they are not lost.
 
 **Built with LangGraph, Groq and Gemini (free tiers), Gmail and Google Sheets. Total cost to build and run: $0.**
 
