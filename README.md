@@ -1,8 +1,8 @@
-# HVAC Lead Intake & Booking Agent
+# Rebeecca: an AI customer service agent for small HVAC businesses
 
-An email agent for a small HVAC business. It watches the company inbox, answers customers within seconds, collects the job details, books an appointment, logs every lead to Google Sheets, and hands the conversation to a person whenever it should not be the one answering.
+Rebeecca is the customer service lady your HVAC business doesn't have time to hire. She watches the company inbox, answers customers within seconds, collects the job details, books an appointment, logs every lead to Google Sheets, and hands the conversation to a person whenever she shouldn't be the one answering.
 
-It is the email version of a "missed-call follow-up" product: the customer reaches out, nobody is free to answer, and the agent makes sure they are not lost.
+She is the email version of a "missed-call follow-up" product: the customer reaches out, nobody is free to answer, and Rebeecca makes sure they are not lost.
 
 **Built with LangGraph, Groq and Gemini (free tiers), Gmail and Google Sheets. Total cost to build and run: $0.**
 
@@ -29,11 +29,11 @@ A customer emails: *"My AC stopped working, can someone come tomorrow afternoon?
 
 ```
 CUSTOMER  Hi, my AC stopped working. Can someone come out tomorrow afternoon?
-AGENT     Sorry to hear that. I can help get you booked. What's your name and the address of the property?
+REBEECCA  Sorry to hear that. I can help get you booked. What's your name and the address of the property?
 CUSTOMER  Sam Rivera, 12 Oak Street, Westfield.
-AGENT     Thanks Sam. I have tomorrow at 1:00 PM, 2:00 PM or 3:00 PM available. Which works best?
+REBEECCA  Thanks Sam. I have tomorrow at 1:00 PM, 2:00 PM or 3:00 PM available. Which works best?
 CUSTOMER  2 please
-AGENT     You're booked for tomorrow at 2:00 PM at 12 Oak Street. A technician will see you then.
+REBEECCA  You're booked for tomorrow at 2:00 PM at 12 Oak Street. A technician will see you then.
 ```
 
 ---
